@@ -1,4 +1,4 @@
-const mongoose  = require('mongoose');
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const UserModel = require('../models/User')
@@ -79,58 +79,40 @@ const logout = async (req, res, next) => {
 
 }
 
-const getProfile = async(req,res,next)=>{
-    const token = req.headers['api_token'];
+const getProfile = async (req, res, next) => {
+    let user = await UserModel.findById(req.decoded.id);
+    const token = req.token;
+    if (user) {
+        const { _id, name, email, favouriteBooks} = user;
 
-    let decoded;
-    try {
-        decoded = await jwt.verify(token, 'secret');
-
-        let user = await UserModel.findById(decoded.id);
-
-        if(user){
-            const {_id, name, email, favouriteBooks, token} = user;
-            
-            res.statusCode = 200;
-            res.send({_id, name, email, favouriteBooks, token});
-        }
-
-    }catch (e) {
-        console.log(e)
-        return next(new CustomError(401, "Bad Token"));
+        res.statusCode = 200;
+        res.send({ _id, name, email, favouriteBooks, token });
     }
+
+
 }
 
 //api/user/favbooks
 const getUserFavourites = async (req, res, next) => {
-    const token = req.headers['api_token'];
-    jwt.verify(token, 'secret', function (err, decoded) {
-        if (err)
-            next(new CustomError(401, "Bad Token"));
-        else {
-
-            UserModel.findOne({ _id: decoded.id }, (err, doc) => {
-                if (err) {
-                    next(new CustomError(500, "Internal Server Error"));
-
-                } else {
-                    res.statusCode = 200;
-                    res.send(doc.favouriteBooks);
-                }
-            })
+    const userID = req.decoded.id;
+    UserModel.findOne({ _id: userID }, (err, doc) => {
+        if (err) {
+            next(new CustomError(500, "Internal Server Error"));
+        } else {
+            res.statusCode = 200;
+            res.send(doc.favouriteBooks);
         }
-    });
+    })
 }
+
+
 
 //api/user/favbooks
 const setFavourites = async (req, res, next) => {
-    const token = req.headers['api_token'];
-    let decoded;
-    try {
-        decoded = await jwt.verify(token, 'secret');
-
+    
         const favId = req.params['id'];
-        let user = await UserModel.findById(decoded.id);
+        const userID = req.decoded.id;
+        let user = await UserModel.findById(userID);
         if (user) {
             let book = await BookModel.findById(favId)
             if (book) {
@@ -145,25 +127,15 @@ const setFavourites = async (req, res, next) => {
                 return next(new CustomError(404, "Not Found"));
             }
         }
-    } catch (e) {
-        console.log(e)
-        return next(new CustomError(401, "Bad Token"));
-    }
-    console.log(decoded);
 }
 //api/user/favbooks
 const deleteFromFavourites = async (req, res, next) => {
-    const token = req.headers['api_token'];
-
-    let decoded;
-    try {
-        decoded = await jwt.verify(token, 'secret');
-
+        const userID = req.decoded.id;
         const deleteId = req.params['id'];
-        let user = await UserModel.findById(decoded.id);
+        let user = await UserModel.findById(userID);
         if (user) {
             console.log(user.favouriteBooks[0])
-            
+
             console.log(deleteId.localeCompare(user.favouriteBooks[0]._id))
             if (!user.favouriteBooks.some(item => deleteId.localeCompare(item._id) === 0))
                 return next(new CustomError(404, "No Liked Books Found"));
@@ -184,10 +156,7 @@ const deleteFromFavourites = async (req, res, next) => {
                 return next(new CustomError(404, "Not Found"));
             }
         }
-    } catch (e) {
-        console.log(e)
-        return next(new CustomError(401, "Bad Token"));
-    }
+   
 }
 
 module.exports = {
