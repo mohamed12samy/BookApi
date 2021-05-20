@@ -24,13 +24,13 @@ const register = async (req, res, next) => {
                             user.password = encrepted;
                             user.save((err, doc) => {
                                 if (!err) {
-                                    const { _id, name, email, favouriteBooks } = doc;
-                                    jwt.sign({ id: doc._id }, 'secret', {
+                                    const { _id, name, email, address , favouriteBooks } = doc;
+                                    jwt.sign({ id: doc._id, user:doc }, 'secret', {
                                         expiresIn: 86400
                                     }, (err, token) => {
                                         if (!err) {
                                             res.statusCode = 201;
-                                            res.send({ _id, name, email, favouriteBooks, token });
+                                            res.send({ _id, name, email, address, favouriteBooks, token });
                                         }
                                     });
                                 }
@@ -58,13 +58,13 @@ const login = async (req, res, next) => {
 
                     if (!valid) next(new CustomError(400, "Bad Credentials, User doesn't exist"));
                     else {
-                        const { _id, name, email, favouriteBooks } = doc;
-                        jwt.sign({ id: doc._id }, 'secret', {
+                        const { _id, name, email,address, favouriteBooks } = doc;
+                        jwt.sign({ id: doc._id, user:doc }, 'secret', {
                             expiresIn: 86400
                         }, (err, token) => {
                             if (!err) {
                                 res.statusCode = 201;
-                                res.send({ _id, name, email, favouriteBooks, token });
+                                res.send({ _id, name, email,address, favouriteBooks, token });
                             }
                         });
                     }
@@ -83,10 +83,10 @@ const getProfile = async (req, res, next) => {
     let user = await UserModel.findById(req.decoded.id);
     const token = req.token;
     if (user) {
-        const { _id, name, email, favouriteBooks} = user;
+        const { _id, name, email,address, favouriteBooks} = user;
 
         res.statusCode = 200;
-        res.send({ _id, name, email, favouriteBooks, token });
+        res.send({ _id, name, email,address, favouriteBooks, token });
     }
 
 

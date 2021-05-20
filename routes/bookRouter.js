@@ -4,7 +4,7 @@ const checkAuthentication = require('../middlewares/checkAuthentication');
 
 const bookRouter = express.Router();
 
-bookRouter.get('/',checkAuthentication, getBooks);
+bookRouter.get('/', getBooks);
 bookRouter.get('/:title',checkAuthentication, getBookByTitle);
 bookRouter.post('/',checkAuthentication, addBook);
 bookRouter.delete('/:id',checkAuthentication, deleteBook);
