@@ -10,7 +10,7 @@ module.exports = () => {
   
   const db = mongoose.connection;
   
-  db.once('open', () => {
+  db.on('open', () => {
     console.log('connection started');
   });
   

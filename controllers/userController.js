@@ -13,7 +13,7 @@ const register = async (req, res, next) => {
         UserModel.findOne({ email: body.email }, (err, doc) => {
             if (!err && doc) {
                 console.log("ERRORR: ", err);
-                next(new CustomError(404, "user is already exists"));
+                next(new CustomError(400, "user is already exists"));
             } else {
                 const user = new UserModel(body);
                 bcrypt.genSalt(10, (err, salt) => {
@@ -33,7 +33,7 @@ const register = async (req, res, next) => {
                                             res.send({ _id, name, email, address, favouriteBooks, token });
                                         }
                                     });
-                                }
+                                }else next(new CustomError(400,err))
                             })
                         }
                     })
@@ -87,11 +87,62 @@ const getProfile = async (req, res, next) => {
 
         res.statusCode = 200;
         res.send({ _id, name, email,address, favouriteBooks, token });
+    }else next(new CustomError(404, "User not found"))
+}
+const getUsers = async (req, res, next) => {
+    let users = await UserModel.find();
+    const token = req.token;
+    if (users) {
+        res.statusCode = 200;
+        res.send(users);
     }
-
-
 }
 
+
+const getUserById = async (req, res, next) => {
+    let user = await UserModel.findById(req.params['id']);
+    
+    if (user) {
+        const { _id, name, email,address, favouriteBooks} = user;
+        res.statusCode = 200;
+        res.send({ _id, name, email,address, favouriteBooks });
+    }else next(new CustomError(404, "User not found"))
+}
+
+const updateUser = async (req, res, next) => {
+    let user = await UserModel.findById(req.decoded.id);
+    const token = req.token;
+    const body = req.body;
+    if (user) {
+
+        user.name = body.name;
+        user.address = body.address;
+        user.email = body.email;
+        user.save((err,doc)=>{
+            if(!err){
+                const { _id, name, email,address, favouriteBooks} = doc;
+                res.statusCode = 202;
+                res.send({ _id, name, email,address, favouriteBooks, token});
+            }
+        });
+    }else next(new CustomError(404,"No User is found"))
+
+}
+const deleteUser = async (req, res, next) => {
+    let id  = req.params['id'];
+    let user = await UserModel.findById(id);
+    //const token = req.token;
+
+    if (user) {
+        await UserModel.deleteOne({_id:id},(err)=>{
+            if(!err){
+                res.statusCode = 202;
+                res.send({"message":"user deleted"})
+            }
+        });
+    }else next(new CustomError(404,"No User is found"))
+
+}
 //api/user/favbooks
 const getUserFavourites = async (req, res, next) => {
     const userID = req.decoded.id;
@@ -164,6 +215,10 @@ module.exports = {
     login,
     logout,
     getProfile,
+    updateUser,
+    deleteUser,
+    getUsers,
+    getUserById,
     getUserFavourites,
     setFavourites,
     deleteFromFavourites

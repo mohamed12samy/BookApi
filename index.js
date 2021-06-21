@@ -3,14 +3,22 @@ const { port } = require('./config.json');
 const CustomError = require('./models/cutomError');
 const initMongoose = require('./mongoose/Mongoose');
 const apiRouter = require('./routes/apiRouter');
-
+const cors = require('cors')
 
 const app = express();
+
+
+
 
 (async function(){ 
    await initMongoose();
 })();
 
+
+app.use(cors(/*{
+  allowedHeaders:'api_token',
+  exposedHeaders:['api_token']
+}*/));
 
 app.use(express.json());
 
