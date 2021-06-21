@@ -1,0 +1,7 @@
+{
+    "port": 5500,
+    "dbSettings": {
+      "url": "mongodb+srv://mohamedsami:123456Book@cluster0.u75fi.mongodb.net/OnlineBook?retryWrites=true&w=majority",
+      "dbName": "OnlineBook"
+    }
+  }
