@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const config = require('../config.json');
-require('dotenv').config()
-const { PORT } = process.env;
+
 
 module.exports = () => {
   mongoose.connect(config.dbSettings.url,
@@ -13,7 +12,7 @@ module.exports = () => {
   const db = mongoose.connection;
   
   db.on('open', () => {
-    console.log('connection started', process.env, PORT);
+    console.log('connection started');
   });
   
   db.emit("hello");

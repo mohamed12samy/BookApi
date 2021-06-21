@@ -4,7 +4,10 @@ const CustomError = require('./models/cutomError');
 const initMongoose = require('./mongoose/Mongoose');
 const apiRouter = require('./routes/apiRouter');
 const cors = require('cors')
+require('dotenv').config()
 const { PORT } = process.env;
+
+
 const app = express();
 
 
