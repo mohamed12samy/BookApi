@@ -1,10 +1,10 @@
 const express = require('express');
-const { port } = require('./config.json');
+//const { port } = require('./config.json');
 const CustomError = require('./models/cutomError');
 const initMongoose = require('./mongoose/Mongoose');
 const apiRouter = require('./routes/apiRouter');
 const cors = require('cors')
-
+const { PORT } = process.env;
 const app = express();
 
 
@@ -36,4 +36,4 @@ app.use((err, req, res, next) => {
   
 
 
-app.listen(port,()=>{})
+app.listen(PORT,()=>{})
