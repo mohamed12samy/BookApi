@@ -26,7 +26,7 @@ const register = async (req, res, next) => {
                                 if (!err) {
                                     const { _id, name, email, address , favouriteBooks } = doc;
                                     jwt.sign({ id: doc._id, user:doc }, 'secret', {
-                                        expiresIn: 86400
+                                        expiresIn: "1m"
                                     }, (err, token) => {
                                         if (!err) {
                                             res.statusCode = 201;
@@ -60,7 +60,7 @@ const login = async (req, res, next) => {
                     else {
                         const { _id, name, email,address, favouriteBooks } = doc;
                         jwt.sign({ id: doc._id, user:doc }, 'secret', {
-                            expiresIn: 86400
+                            expiresIn: "1m"
                         }, (err, token) => {
                             if (!err) {
                                 res.statusCode = 201;

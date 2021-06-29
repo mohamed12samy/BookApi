@@ -5,7 +5,8 @@ const checkAuthentication = (req, res, next) => {
     const token = req.headers['api_token'];
     jwt.verify(token, 'secret', function (err, decoded) {
         if (err){
-            //console.log("-----------------------",err)
+            console.log("-----------------------",err)
+            res.send(err)
             next(new CustomError(401, "Bad Token"));
         }
         else{
