@@ -80,7 +80,7 @@ const logout = async (req, res, next) => {
 }
 
 const getProfile = async (req, res, next) => {
-    let user = await UserModel.findById(req.decoded.id);
+    let user = await UserModel.findById(req.decoded.id,{password:0, __v:0});
     const token = req.token;
     if (user) {
         const { _id, name, email,address, favouriteBooks} = user;
@@ -90,7 +90,7 @@ const getProfile = async (req, res, next) => {
     }else next(new CustomError(404, "User not found"))
 }
 const getUsers = async (req, res, next) => {
-    let users = await UserModel.find();
+    let users = await UserModel.find({},{password:0, __v:0});
     const token = req.token;
     if (users) {
         res.statusCode = 200;
