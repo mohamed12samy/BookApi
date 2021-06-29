@@ -97,10 +97,26 @@ const updateBook = async (req, res, next) => {
     }
 }
 
+
+const getBooksAndThierUsers = async(req, res, next)=>{
+    const userID = req.decoded.id;
+    BookModel.
+    find({likedUsers:userID}).
+    populate('Users').
+    exec(function (err, docs) {
+      if(err) {res.statusCode = 500
+        res.send(e)
+    }
+    res.statusCode = 200
+    res.send(docs)
+    });
+}
+
 module.exports = {
     getBooks,
     getBookByTitle,
     addBook,
     deleteBook,
     updateBook,
+    getBooksAndThierUsers,
 }

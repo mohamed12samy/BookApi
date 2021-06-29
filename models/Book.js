@@ -5,7 +5,7 @@ const BookSchema = new mongoose.Schema({
     description: { type: String, required: true,  max: 250 },
     author: { type: String, required: true, max:50 },
     rate: {type:Number, required:true},
-    likedUsers:[{userID:{type: mongoose.Types.ObjectId}}]
+    likedUsers:[{userID:{type: mongoose.Types.ObjectId, ref:'users' }}]
 })
 
 const BookModel = mongoose.model('books', BookSchema);
